@@ -14,426 +14,127 @@
 */
 
 #include "application.h"
+#include <iostream>
+
 
 // Main Application Object
 Application application;
 
 // Reference to Board Object
-extern VCU1200_Board board;
+//extern VCU1200_Board board;
 
 Application::Application()
 {
-
+	increment = 0;
 }
 
 void Application::initialize()
 {
-	// Set CAN Termination Resistor Setting
-	board.setCANTermination(CAN_1, CAN_1_TERMINATION);
-	board.setCANTermination(CAN_2, CAN_2_TERMINATION);
+    std::cout << "Initialize Check" << std::endl;
 
-	// Initialize Inputs for this Application
-	initializeInputs();
+    // Uncomment or implement the following lines
+    // board.setCANTermination(CAN_1, CAN_1_TERMINATION);
+    // board.setCANTermination(CAN_2, CAN_2_TERMINATION);
 
-	// Initialize CAN Receive
-	initializeCANReceive();
+    // initializeInputs();
 
-	// Set Initial State to Startup
-	changeState(STARTUP);
-}
+    // initializeCANReceive();
 
-void Application::tick()
-{
-	// Process State Machine
-	processState();
-
-	//Blink the Lights With User Input
-	calculateLEDS();
-
-	// Send CAN Data
-	sendCANData();
-
-	// Increment Counters
-	incrementCounters();
-}
-
-//blinkLights Action for the LightsOn State
-void Application::calculateLEDS()
-{
-	if (state == SYSTEM_ON)
-	{
-/*		//ON
-		float OFF_LEDS;
-		for(int i = 0; i < potentiometer_command; i++)
-		{
-			setOutput(LED[i], ON);
-		}
-		//OFF LEDS
-		OFF_LEDS = 14 - potentiometer_command;
-		for(int i = 0; i < OFF_LEDS; i++)
-		{
-			setOutput(LED[i], OFF);
-		}
-
-		//potentiometer_command = getAnalogInput(POTENTIOMETER);
-
-	    //code below maps potentiometer
-	    if(potentiometer_command == 14)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, ON);
-			setOutput(LED9, ON);
-			setOutput(LED10, ON);
-			setOutput(LED11, ON);
-			setOutput(LED12, ON);
-			setOutput(LED13, ON);
-			setOutput(LED14, ON);
-		}
-		else if(potentiometer_command == 13)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, ON);
-			setOutput(LED9, ON);
-			setOutput(LED10, ON);
-			setOutput(LED11, ON);
-			setOutput(LED12, ON);
-			setOutput(LED13, ON);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 12)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, ON);
-			setOutput(LED9, ON);
-			setOutput(LED10, ON);
-			setOutput(LED11, ON);
-			setOutput(LED12, ON);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 11)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, ON);
-			setOutput(LED9, ON);
-			setOutput(LED10, ON);
-			setOutput(LED11, ON);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 10)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, ON);
-			setOutput(LED9, ON);
-			setOutput(LED10, ON);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 9)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, ON);
-			setOutput(LED9, ON);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 8)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, ON);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 7)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, ON);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 6)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, ON);
-			setOutput(LED7, OFF);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 5)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, ON);
-			setOutput(LED6, OFF);
-			setOutput(LED7, OFF);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 4)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, ON);
-			setOutput(LED5, OFF);
-			setOutput(LED6, OFF);
-			setOutput(LED7, OFF);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 3)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, ON);
-			setOutput(LED4, OFF);
-			setOutput(LED5, OFF);
-			setOutput(LED6, OFF);
-			setOutput(LED7, OFF);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 2)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, ON);
-			setOutput(LED3, OFF);
-			setOutput(LED4, OFF);
-			setOutput(LED5, OFF);
-			setOutput(LED6, OFF);
-			setOutput(LED7, OFF);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 1)
-		{
-			setOutput(LED1, ON);
-			setOutput(LED2, OFF);
-			setOutput(LED3, OFF);
-			setOutput(LED4, OFF);
-			setOutput(LED5, OFF);
-			setOutput(LED6, OFF);
-			setOutput(LED7, OFF);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		else if(potentiometer_command == 0)
-		{
-			setOutput(LED1, OFF);
-			setOutput(LED2, OFF);
-			setOutput(LED3, OFF);
-			setOutput(LED4, OFF);
-			setOutput(LED5, OFF);
-			setOutput(LED6, OFF);
-			setOutput(LED7, OFF);
-			setOutput(LED8, OFF);
-			setOutput(LED9, OFF);
-			setOutput(LED10, OFF);
-			setOutput(LED11, OFF);
-			setOutput(LED12, OFF);
-			setOutput(LED13, OFF);
-			setOutput(LED14, OFF);
-		}
-		*/
-	}
+    // changeState(STARTUP);
 }
 
 void Application::changeState(SystemState new_state)
 {
-	switch (new_state)
-	{
-	case STARTUP:
-		//Set Default Actions for this state
-		setOutput(LED1, OFF);
-		setOutput(LED2, OFF);
-		setOutput(LED3, OFF);
-		setOutput(LED4, OFF);
-		setOutput(LED5, OFF);
-		setOutput(LED6, OFF);
-		setOutput(LED7, OFF);
-		setOutput(LED8, OFF);
-		setOutput(LED9, OFF);
-		setOutput(LED10, OFF);
-		setOutput(LED11, OFF);
-		setOutput(LED12, OFF);
-		setOutput(LED13, OFF);
-		setOutput(LED14, OFF);
+
+	std:: cout << new_state << std::endl;
+
+	// switch (new_state)
+	// {
+	// case STARTUP:
+	// 	//Set Default Actions for this state
+	// 	setOutput(LED1, OFF);
+	// 	setOutput(LED2, OFF);
+	// 	setOutput(LED3, OFF);
+	// 	setOutput(LED4, OFF);
+	// 	setOutput(LED5, OFF);
+	// 	setOutput(LED6, OFF);
+	// 	setOutput(LED7, OFF);
+	// 	setOutput(LED8, OFF);
+	// 	setOutput(LED9, OFF);
+	// 	setOutput(LED10, OFF);
+	// 	setOutput(LED11, OFF);
+	// 	setOutput(LED12, OFF);
+	// 	setOutput(LED13, OFF);
+	// 	setOutput(LED14, OFF);
 
 
-		// Bootloader is OK in this State
-		board.setBootloaderSafe(true);
+	// 	// Bootloader is OK in this State
+	// 	board.setBootloaderSafe(true);
 
-		// Override is OK in this State
-		board.setOutputOverrideSafe(true);
-		break;
+	// 	// Override is OK in this State
+	// 	board.setOutputOverrideSafe(true);
+	// 	break;
 
-	case SYSTEM_OFF:
-		//Set Default Actions for this state
-		setOutput(LED1, OFF);
-		setOutput(LED2, OFF);
-		setOutput(LED3, OFF);
-		setOutput(LED4, OFF);
-		setOutput(LED5, OFF);
-		setOutput(LED6, OFF);
-		setOutput(LED7, OFF);
-		setOutput(LED8, OFF);
-		setOutput(LED9, OFF);
-		setOutput(LED10, OFF);
-		setOutput(LED11, OFF);
-		setOutput(LED12, OFF);
-		setOutput(LED13, OFF);
-		setOutput(LED14, OFF);
-
-
-		//setOutput(POTENTIOMETER_5V, OFF); //gives error
-
-		// Bootloader is OK in this State
-		board.setBootloaderSafe(true);
-
-		// Override is OK in this State
-		board.setOutputOverrideSafe(true);
-		break;
-
-	case SYSTEM_ON:
-		//Analog Controlled Lights
-		//Actions Defined in calculateLEDS function called in tick() function
-
-		//setOutput(POTENTIOMETER_5V, ON);
+	// case SYSTEM_OFF:
+	// 	//Set Default Actions for this state
+	// 	setOutput(LED1, OFF);
+		// setOutput(LED2, OFF);
+		// setOutput(LED3, OFF);
+		// setOutput(LED4, OFF);
+		// setOutput(LED5, OFF);
+		// setOutput(LED6, OFF);
+		// setOutput(LED7, OFF);
+		// setOutput(LED8, OFF);
+		// setOutput(LED9, OFF);
+		// setOutput(LED10, OFF);
+		// setOutput(LED11, OFF);
+		// setOutput(LED12, OFF);
+		// setOutput(LED13, OFF);
+		// setOutput(LED14, OFF);
 
 
-		// Bootloader is OK in this State
-		board.setBootloaderSafe(true);
+		// //setOutput(POTENTIOMETER_5V, OFF); //gives error
 
-		// Override is OK in this State
-		board.setOutputOverrideSafe(true);
-		break;
-	}
-	// Update Current State
-	state = new_state;
+		// // Bootloader is OK in this State
+		// board.setBootloaderSafe(true);
 
-	// Reset State Counter every 1 second
-	state_counter = 0;
+		// // Override is OK in this State
+		// board.setOutputOverrideSafe(true);
+		// break;
+
+	// case SYSTEM_ON:
+	// 	//Analog Controlled Lights
+	// 	//Actions Defined in calculateLEDS function called in tick() function
+
+	// 	//setOutput(POTENTIOMETER_5V, ON);
+
+
+	// 	// Bootloader is OK in this State
+	// 	board.setBootloaderSafe(true);
+
+	// 	// Override is OK in this State
+	// 	board.setOutputOverrideSafe(true);
+	// 	break;
+	// }
+	// // Update Current State
+	// state = new_state;
+
+	// // Reset State Counter every 1 second
+	// state_counter = 0;
 }
-
-void Application::incrementCounters()
-{
-	state_counter++;
-	// Parent Class Function
-	CANReceiver::incrementCounters();
-}
-
-
 
 void Application::initializeCANReceive()
 {
+	std:: cout << "initializeCANReceive Check" << std::endl;
 	// Temporary Mailbox for Setup
-	tCANMsgObject can_rx_message;
+	// tCANMsgObject can_rx_message;
 
-	// Setup Receive Messages on CAN Interface
+	// // Setup Receive Messages on CAN Interface
 
-	can_rx_message.ui32MsgID = 0x300; //message ID for Rx to VCU
-	can_rx_message.ui32MsgIDMask = 0x700; // The message identifier mask used when identifier filtering is enabled.
-	can_rx_message.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;
-	board.can.can_1.initializeReceiveMessage(this, &can_rx_message);
+	// can_rx_message.ui32MsgID = 0x300; //message ID for Rx to VCU
+	// can_rx_message.ui32MsgIDMask = 0x700; // The message identifier mask used when identifier filtering is enabled.
+	// can_rx_message.ui32Flags = MSG_OBJ_RX_INT_ENABLE | MSG_OBJ_USE_ID_FILTER;
+	// board.can.can_1.initializeReceiveMessage(this, &can_rx_message);
 
 
 	/*
@@ -445,79 +146,58 @@ void Application::initializeCANReceive()
 	 */
 }
 
-bool Application::receiveCANMessage(CANPort can_port, tCANMsgObject* message, unsigned int mailbox)
+void Application::tick()
 {
-	// True if Message has been Processed
-	bool processed = false;
-	uint16_t tempvar;
-	//int16_t stemp;
+	increment++;
 
-	// 0-8 Userinput Lights to Turn on
-	if (message->ui32MsgID == 0x300 )//if it's the designated ID for VCU Rx, i.e. 0x300
-	{
-		//potentiometer_command = message->pui8MsgData[0]; //stick the value as an ascii char, resolution 128?
+	std::cout << increment << std::endl;
+	// // Process State Machine
+	// processState();
 
-		processed = true;
-	}
-	//temporary function for idAddress
+	// //Blink the Lights With User Input
+	// calculateLEDS();
 
-	if (message->ui32MsgID == idAddress){
-	    parseCANBytes(message);
-	}
+	// // Send CAN Data
+	// sendCANData();
 
-	if(message->ui32MsgID == 0x0A5){
-	    tempvar = message->pui8MsgData[0];
-	    tempvar << 8 ;
-	    tempvar += message->pui8MsgData[1];
-	    //process tempvar into function
-	    //maybe clear tempvar, i.e. tempvar = 0;
-	    //maybe not, depends on state machine needs and use of computational power
-	    //
-
-	    //do again for bytes 2 and 3
-	}
-
-	if (processed)
-	{
-		last_message_counter = 0;
-		message_received = true;
-	}
-	return processed;
-}
-//
-void Application::parseCANbytes(tCANMsgObject* message){
-
+	// // Increment Counters
+	// incrementCounters();
 }
 
+void incrementCounters() {
+	std:: cout << "incrementCounters Check" << std::endl;
+}
 
-void Application::sendCANData()
-{
-	uint16_t utemp;
+void sendCANData() {
+	
+	std::cout << "sendCANData Check" << std::endl;
 
-	// CAN Message Object for Transmission
-	CANMessage msg(CANMessage::ID_STANDARD, CANMessage::DATA_FRAME, 8);
+	// uint16_t utemp;
 
-	// every 100th tick
-	if (board.getStartupCounter() % 100 == 0)
-	{
-		//MESSAGE # 1 Primary System Status (ID 0x200)
-		msg.setID(0x200);
-		msg.setLength(1);
+	// // CAN Message Object for Transmission
+	// CANMessage msg(CANMessage::ID_STANDARD, CANMessage::DATA_FRAME, 8);
 
-		//Alex's Message #2
-		msg.setID(0x201); //set program status, ID
-		msg.setLength(6); // setting message length to be char array of size 6
+	// // every 100th tick
+	// if (board.getStartupCounter() % 100 == 0)
+	// {
+	// 	//MESSAGE # 1 Primary System Status (ID 0x200)
+	// 	msg.setID(0x200);
+	// 	msg.setLength(1);
 
-                //getData method returns char array of size 8, named data, can assign a value using "="
-		        msg.getData() [0] = 1;
-		        msg.getData() [1] = 1;
-                msg.getData() [2] = 1;
-                msg.getData() [3] = 1;
-                msg.getData() [4] = 1;
-                msg.getData() [5] = 1;
+	// 	//Alex's Message #2
+	// 	msg.setID(0x201); //set program status, ID
+	// 	msg.setLength(6); // setting message length to be char array of size 6
+
+    //             //getData method returns char array of size 8, named data, can assign a value using "="
+	// 	        msg.getData() [0] = 1;
+	// 	        msg.getData() [1] = 1;
+    //             msg.getData() [2] = 1;
+    //             msg.getData() [3] = 1;
+    //             msg.getData() [4] = 1;
+    //             msg.getData() [5] = 1;
 
 
-		board.can.sendMessage(CAN_1, &msg);
+	// 	board.can.sendMessage(CAN_1, &msg);
 /*
 		// Current Analog Voltage Input
 		utemp = getAnalogInput(POTENTIOMETER); //also adds error; tracing code, it likely returns a low voltage; commenting out
@@ -630,41 +310,71 @@ void Application::sendCANData()
 
 		// Send Message
 		board.can.sendMessage(CAN_1, &msg);*/
-	}
+	//}
 }
-
 
 void Application::processState()
 {
-	switch (state)
-	{
-	case STARTUP:
-		if (state_counter >= MIN_STATE_TIME)
-		{
-			changeState(SYSTEM_ON);
-		}
-		break;
+	std::cout << "processState check" << std::endl;
+	// switch (state)
+	// {
+	// case STARTUP:
+	// 	if (state_counter >= MIN_STATE_TIME)
+	// 	{
+	// 		changeState(SYSTEM_ON);
+	// 	}
+	// 	break;
 
-	case SYSTEM_OFF:
-		if(state_counter >= MIN_STATE_TIME)
-		{/*
-			if(getInput(ON_OFF_SWITCH))
-			{
-				changeState(SYSTEM_ON);
-			}
-		*/
-		}
-		break;
+	// case SYSTEM_OFF:
+	// 	if(state_counter >= MIN_STATE_TIME)
+	// 	{/*
+	// 		if(getInput(ON_OFF_SWITCH))
+	// 		{
+	// 			changeState(SYSTEM_ON);
+	// 		}
+	// 	*/
+	// 	}
+	// 	break;
 
-	case SYSTEM_ON:
-		if(state_counter >= MIN_STATE_TIME)
-		{/*
-			if(!getInput(ON_OFF_SWITCH))
-			{
-				changeState(SYSTEM_OFF);
-			}
-		*/
+	// case SYSTEM_ON:
+	// 	if(state_counter >= MIN_STATE_TIME)
+	// 	{/*
+	// 		if(!getInput(ON_OFF_SWITCH))
+	// 		{
+	// 			changeState(SYSTEM_OFF);
+	// 		}
+	// 	*/
+	// 	}
+	// 	break;
+	// }
+}
+
+int main() {
+	application.initialize();
+
+	std::cout << std::endl;
+
+	std::cout << "Enum Check" << std::endl;
+
+	application.changeState(STARTUP); 
+	application.changeState(SYSTEM_OFF);
+	application.changeState(SYSTEM_ON);
+
+	std::cout << std::endl;
+
+	application.initializeCANReceive();
+
+	std::cout << std::endl;
+
+	while(true) {
+		for(unsigned int i = 0; i < 5; i++) {
+			application.tick();
 		}
 		break;
 	}
+
+	std::cout << std::endl;
+
+	application.processState();	
+
 }

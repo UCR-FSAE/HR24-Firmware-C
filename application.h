@@ -15,10 +15,10 @@
 #ifndef VCU1200_TUTORIAL_1_BLINKINGLIGHTS_APPLICATION_H_
 #define VCU1200_TUTORIAL_1_BLINKINGLIGHTS_APPLICATION_H_
 
-#include "Devices/vcu1200_board.h"
-#include "Library/can_receiver.h"
-
-#include "functional_io.h"
+// #include "Devices/vcu1200_board.h"
+// #include "Library/can_receiver.h"
+// #include "functional_io.h"
+// #include "inc/hw_types.h" // Add the include path for "inc/hw_types.h"
 
 enum SystemState
 {
@@ -27,7 +27,7 @@ enum SystemState
 	SYSTEM_ON
 };
 
-class Application : public CANReceiver
+class Application //: public CANReceiver
 {
 public:
 	// Default Constructor
@@ -36,88 +36,90 @@ public:
 	// Change System to New State
 	void changeState(SystemState new_state);
 
-	// Initialize Application
+	// // Initialize Application
 	void initialize();
 
-	// Initialize CAN Message Reception
+	// // Initialize CAN Message Reception
 	void initializeCANReceive();
 
-	// Determine if State Changes are Necessary
+	// // Determine if State Changes are Necessary
 	void processState();
 
-	// Process Received CAN Message
-	bool receiveCANMessage(CANPort can_port, tCANMsgObject* message, unsigned int mailbox);
+	// // Process Received CAN Message
+	//bool receiveCANMessage(CANPort can_port, tCANMsgObject* message, unsigned int mailbox);
 
-	// Perform Regular Processing
+	// // Perform Regular Processing
 	void tick();
 
-	void calculateLEDS()
+	void calculateLEDS();
 
-	//added function 04-19-23, Alex H, parses data bytes of CAN
-	//i.e. 8 byte message comes in and combines bytes to int/float representation before sending
-	void parseCANBytes(tCANMsgObject* message);
+	// added function 04-19-23, Alex H, parses data bytes of CAN
+	// i.e. 8 byte message comes in and combines bytes to int/float representation before sending
+	//void parseCANBytes(tCANMsgObject* message);
 
 private:
 	// Increment Counters
 	void incrementCounters();
 
-	// Send System CAN Data
+	// // Send System CAN Data
 	void sendCANData();
 
 private:
-/*	// Secondary VCU Object
-	SecondaryVCU secondary_vcu;
+	// Secondary VCU Object
+	// SecondaryVCU secondary_vcu;
 
 	// Resistance Welder
-	ResistanceWelder resistance_welder;
+	// ResistanceWelder resistance_welder;
 
 	// XY Stage Motors
-	LinearStage x_axis;
-	LinearStage y_axis;
+	// LinearStage x_axis;
+	// LinearStage y_axis;
 
 	// Weld Center States
-	WeldCenterState state;
+	// WeldCenterState state;
 
 	// Command Status
-	CommandStatus command_status;
+	// CommandStatus command_status;
 
 	// Current Command
-	Command current_command;
+	// Command current_command;
 
 	// Next Command
-	Command next_command;*/
+	// Command next_command;
 
 	// True if New Command has been Received
-	bool new_command;
+	//bool new_command;
 
 	SystemState state;
 
-	//added 04-19-23, placeholder for
-	uint16_t temporaryInteger;
+	int increment;
+
+	// added 04-19-23, placeholder for
+	//uint16_t temporaryInteger;
 
 	// The Current Accelerator Position
-	//float potentiometer_command;		// %
+	// float potentiometer_command; // %
 
 	// How Many Ticks System has been in Current State
-	unsigned int state_counter;
-/*
+	//unsigned int state_counter;
+
 	// Turn Knob Positions
-	TurnKnobPosition turn_knob;
+	// TurnKnobPosition turn_knob;
 
 	// Joystick Positions
-	JoystickPosition joystick;
+	// JoystickPosition joystick;
 
 	// True if Joystick had been Released before this Tick
-	bool joystick_released;
+	// bool joystick_released;
 
 	// True if Movement is Allowed
-	bool movement_allowed;
+	// bool movement_allowed;
 
 	// True if Origin has been Set
-	bool origin_set;
+	// bool origin_set;
 
 	// High Frequency Counter
-	unsigned int hf_counter;*/
+	// unsigned int hf_counter;
 };
 
 #endif /* VCU1200_TUTORIAL_1_BLINKINGLIGHTS_APPLICATION_H_ */
